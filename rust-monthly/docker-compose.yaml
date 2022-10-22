@@ -1,0 +1,32 @@
+version: "3"
+services:
+  rust:
+    image: didstopia/rust-server
+    container_name: rust-monthly
+    ports:
+      - "${PORT}:${PORT}/udp"
+      - "${RCON_PORT}:${RCON_PORT}"
+      - "${APP_PORT}:${APP_PORT}"
+    restart: "unless-stopped"
+    volumes:
+      - "/etc/timezone:/etc/timezone"
+      - "${VOLUME}"
+    stdin_open: true
+    tty: true
+    environment:
+      RUST_SERVER_STARTUP_ARGUMENTS: "${START_ARGS}"
+      RUST_SERVER_IDENTITY: "${SERVER_ID}"
+      RUST_SERVER_PORT: "${PORT}"
+      RUST_SERVER_SEED: "${SEED}"
+      RUST_SERVER_WORLDSIZE: "${SIZE}"
+      RUST_SERVER_NAME: "${SERVER_NAME}"
+      RUST_SERVER_MAXPLAYERS: "${MAX_PLAYERS}"
+      RUST_SERVER_DESCRIPTION: "${SERVER_DESC}"
+      RUST_SERVER_URL: "${SERVER_URL}"
+      RUST_SERVER_SAVE_INTERVAL: "${SAVE_INT}"
+      RUST_RCON_PORT: "${RCON_PORT}"
+      RUST_APP_PORT: "${APP_PORT}"
+      RUST_RCON_PASSWORD: "${RCON_PASS}"
+      RUST_START_MODE: "${START_MODE}"
+      RUST_OXIDE_ENABLED: "${OXIDE}"
+      RUST_OXIDE_UPDATE_ON_BOOT: "${OXIDE_UPDATE}"

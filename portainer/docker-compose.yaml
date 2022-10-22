@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  portainer-server:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    ports: 
+      - "${PORT}:${PORT}"
+      - "${PORT2}:${PORT2}"
+    restart: "always"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/lib/docker/volumes:/var/lib/docker/volumes"

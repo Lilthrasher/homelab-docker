@@ -1,0 +1,15 @@
+version: "3"
+services:
+  mc-velocity:
+    image: itzg/bungeecord
+    container_name: minecraft-velocity
+    ports:
+      - "${PORT}:${PORT2}"
+    restart: "unless-stopped"
+    volumes:
+      - "/etc/timezone:/etc/timezone"
+      - "${VOLUME}"
+    stdin_open: true
+    tty: true
+    environment:
+      TYPE: "VELOCITY"

@@ -1,0 +1,30 @@
+version: "3"
+services:
+  mc-modded:
+    image: itzg/minecraft-server:java8-multiarch
+    container_name: minecraft-modded
+    ports:
+      - "${PORT}:${PORT}"
+    restart: "unless-stopped"
+    volumes:
+      - "/etc/timezone:/etc/timezone"
+      - "${VOLUME}"
+      - "${MODPACKS}"
+    stdin_open: true
+    tty: true
+    environment:
+      EULA: "TRUE"
+      SERVER_PORT: "${PORT}"
+      TYPE: "${TYPE}"
+      MEMORY: "${MEMORY}"
+      MOTD: "${MOTD}"
+      OPS: "${ADMIN_IGN}"
+      MAX_PLAYERS: "${MAX_PLAYERS}"
+      DIFFICULTY: "${DIFFICULTY}"
+      PLAYER_IDLE_TIMEOUT: "${AFK_TIMER}"
+      ENABLE_WHITELIST: "${WHITELIST_ENABLE}"
+      ENFORCE_WHITELIST: "${WHITELIST_ENFORCE}"
+      SNOOPER_ENABLED: "false"
+      OVERRIDE_SERVER_PROPERTIES: "true"
+      CF_SERVER_MOD: "/modpacks/${SERVER_ZIP}"
+      USE_AIKAR_FLAGS: "true"

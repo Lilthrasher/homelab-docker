@@ -1,0 +1,30 @@
+version: "3"
+services:
+  mc-survival:
+    image: itzg/minecraft-server:java17
+    container_name: minecraft-survival
+    ports:
+      - "${PORT}:${PORT}"
+    restart: "unless-stopped"
+    volumes:
+      - "/etc/timezone:/etc/timezone"
+      - "${VOLUME}"
+      - "${PLUGINS}"
+    stdin_open: yes
+    tty: yes
+    environment:
+      EULA: "TRUE"
+      SERVER_PORT: "${PORT}"
+      MEMORY: "${MEMORY}"
+      TYPE: "PAPER"
+      OPS: "${ADMIN_IGN}"
+      MAX_PLAYERS: "${MAX_PLAYERS}"
+      DIFFICULTY: "${DIFFICULTY}"
+      PLAYER_IDLE_TIMEOUT: "${AFK_TIMER}"
+      ENABLE_WHITELIST: "${WHITELIST_ENABLE}"
+      ENFORCE_WHITELIST: "${WHITELIST_ENFORCE}"
+      OVERRIDE_SERVER_PROPERTIES: "true"
+      SNOOPER_ENABLED: "false"
+      USE_AIKAR_FLAGS: "true"
+      ONLINE_MODE: "false"
+      VERSION: "${VERSION}"
