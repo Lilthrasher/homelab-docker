@@ -1,0 +1,12 @@
+version: "3"
+services:
+  proxmox-influxdb:
+    image: influxdb
+    container_name: proxmox-influxdb
+    restart: on-failure:5
+    ports:
+      - "3051:8086"
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - ./influxdb-data:/var/lib/influxdb2
+      - ./influxdb-data:/etc/influxdb2

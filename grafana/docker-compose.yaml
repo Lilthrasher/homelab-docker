@@ -1,0 +1,11 @@
+version: "3"
+services:
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    restart: on-failure:5
+    ports:
+      - "3050:3000"
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - ./grafana-data:/var/lib/grafana
