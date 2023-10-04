@@ -1,0 +1,15 @@
+version: "3"
+services:
+  adguard:
+    image: adguard/adguardhome
+    container_name: adguard-home
+    restart: unless-stopped
+    ports:
+      - 53:53/tcp # Ports have to be formatted this way
+      - 53:53/udp
+      - $(ADMIN-PORT):80 # Admin Panel
+      - $(SETUP-PORT):3000 # Setup Port
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - $(WORK-DIR):/opt/adguardhome/work
+      - $(CONF-DIR):/opt/adguardhome/conf

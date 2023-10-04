@@ -1,0 +1,13 @@
+version: "3"
+services:
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - $(GRAFANA-PORT):3000
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - $(GRAFANA-DIR):/var/lib/grafana
+    environment:
+      - GF_FEATURE_TOGGLES_ENABLE=publicDashboards

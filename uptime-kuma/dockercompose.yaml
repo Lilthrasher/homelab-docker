@@ -1,0 +1,14 @@
+version: "3"
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    restart: unless-stopped
+    ports:
+      - $(KUMA-PORT):3001
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - $(KUMA-DIR):/app/data
+      - $(SECRET-DIR)
+    environment:
+      - UPTIME_KUMA_DISABLE_FRAME_SAMEORIGIN=true

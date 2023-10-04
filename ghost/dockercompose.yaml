@@ -1,0 +1,37 @@
+version: "3"
+services:
+  ghost:
+    image: ghost
+    container_name: ghost-blog
+    restart: unless-stopped
+    ports:
+      - $(GHOST-PORT):2368
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - $(GHOST-DIR):/var/lib/ghost/content
+    environment:
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: root
+      database__connection__password: $(DB-PASSWORD)
+      database__connection__database: ghost
+      url: $(GHOST-URL)
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: ghost-mysql
+    restart: unless-stopped
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - $(DB-DIR):/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: $(DB-PASSWORD)
+    healthcheck:
+      test: mysqladmin --password=$(DB-PASSWORD) version
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s

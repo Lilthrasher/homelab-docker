@@ -1,0 +1,10 @@
+version: "3"
+services:
+  nessus:
+    image: tenableofficial/nessus
+    container_name: nessus
+    restart: unless-stopped
+    ports:
+      - $(NESSUS-PORT):8834
+    environment:
+      ACTIVATION_CODE: $(NESSUS-CODE)

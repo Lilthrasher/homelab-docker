@@ -1,0 +1,16 @@
+version: "3"
+services:
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    ports:
+      - $(WATCH-PORT):8080
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - $(SECRET-DIR)
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_SCHEDULE=0 0 0 * * *
+      - WATCHTOWER_HTTP_API_METRICS=true
+      - WATCHTOWER_HTTP_API_TOKEN=$(API-TOKEN)
