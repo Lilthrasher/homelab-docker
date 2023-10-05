@@ -35,7 +35,7 @@ services:
     restart: unless-stopped
     volumes:
     - ${GUAC_DIR}/init/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
-    - ${GUAC_DIR}/db:/var/lib/mysql
+    - ${GUAC_DIR}/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=guacamole_db
       - POSTGRES_USER=${DB_USER}
