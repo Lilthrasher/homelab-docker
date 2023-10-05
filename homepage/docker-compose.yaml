@@ -5,8 +5,8 @@ services:
     container_name: homepage
     restart: unless-stopped
     ports:
-      - $(PAGE-PORT):3000
+      - ${PAGE_PORT}:3000
     volumes:
       - /etc/timezone:/etc/timezone
-      - $(DATA-DIR):/app/config
-      - $(SECRET-DIR)
+      - ${DATA_DIR}:/app/config
+      - ${SECRET_DIR}

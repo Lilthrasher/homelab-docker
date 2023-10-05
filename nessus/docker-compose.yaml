@@ -5,6 +5,6 @@ services:
     container_name: nessus
     restart: unless-stopped
     ports:
-      - $(NESSUS-PORT):8834
+      - ${NESSUS_PORT}:8834
     environment:
-      ACTIVATION_CODE: $(NESSUS-CODE)
+      ACTIVATION_CODE: ${NESSUS_CODE}

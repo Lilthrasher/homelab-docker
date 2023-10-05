@@ -5,10 +5,10 @@ services:
     container_name: speedtest-tracker
     restart: unless-stopped
     ports:
-      - $(SPEED-PORT):443
+      - ${SPEED_PORT}:443
     volumes:
       - /etc/timezone:/etc/timezone
-      - $(SPEED-DIR):/config
+      - ${SPEED_DIR}:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -16,9 +16,9 @@ services:
       - DB_HOST=db
       - DB_PORT=3306
       - DB_DATABASE=speedtest_tracker
-      - DB_USERNAME=$(DB-USER)
-      - DB_PASSWORD=$(DB-PASS)
-      - APP_KEY=base64:$(APP-KEY)
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASS}
+      - APP_KEY=base64:${APP_KEY}
     depends_on:
       - maria-db
 
@@ -27,8 +27,8 @@ services:
     restart: unless-stopped
     environment:
       - MARIADB_DATABASE=speedtest_tracker
-      - MARIADB_USER=$(DB-USER)
-      - MARIADB_PASSWORD=$(DB-PASS)
+      - MARIADB_USER=${DB_USER}
+      - MARIADB_PASSWORD=${DB_PASS}
       - MARIADB_RANDOM_ROOT_PASSWORD=false
     volumes:
-      - $(DB-DIR):/var/lib/mysql
+      - ${DB_DIR}:/var/lib/mysql

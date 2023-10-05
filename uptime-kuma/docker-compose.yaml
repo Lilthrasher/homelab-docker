@@ -5,10 +5,10 @@ services:
     container_name: uptime-kuma
     restart: unless-stopped
     ports:
-      - $(KUMA-PORT):3001
+      - ${KUMA_PORT}:3001
     volumes:
       - /etc/timezone:/etc/timezone
-      - $(KUMA-DIR):/app/data
-      - $(SECRET-DIR)
+      - ${KUMA_DIR}:/app/data
+      - ${SECRET_DIR}
     environment:
       - UPTIME_KUMA_DISABLE_FRAME_SAMEORIGIN=true

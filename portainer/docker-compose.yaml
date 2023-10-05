@@ -5,9 +5,9 @@ services:
     container_name: portainer
     restart: unless-stopped
     ports:
-      - $(PORT-PORT):9000
+      - ${PORT_PORT}:9000
     volumes:
       - /etc/timezone:/etc/timezone
-      - $(PORTAINER-DIR):/data
-      - $(DOCKER-VOLUMES)
-      - $(SECRET-DIR)
+      - ${PORTAINER_DIR}:/data
+      - ${DOCKER_VOLUMES}
+      - ${SECRET_DIR}

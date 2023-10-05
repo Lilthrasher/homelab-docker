@@ -5,12 +5,12 @@ services:
     container_name: watchtower
     restart: unless-stopped
     ports:
-      - $(WATCH-PORT):8080
+      - ${WATCH_PORT}:8080
     volumes:
       - /etc/timezone:/etc/timezone
-      - $(SECRET-DIR)
+      - ${SECRET_DIR}
     environment:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_SCHEDULE=0 0 0 * * *
       - WATCHTOWER_HTTP_API_METRICS=true
-      - WATCHTOWER_HTTP_API_TOKEN=$(API-TOKEN)
+      - WATCHTOWER_HTTP_API_TOKEN=${API_TOKEN}
