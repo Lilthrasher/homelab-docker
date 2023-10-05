@@ -5,44 +5,38 @@ services:
     container_name: guacamole-daemon
     restart: unless-stopped
     volumes:
-      - $(GUAC-DIR)/drive:/drive:rw
-      - $(GUAC-DIR)/record:/record:rw
+      - ${GUAC_DIR}/drive:/drive:rw
+      - ${GUAC_DIR}/record:/record:rw
 
   guacamole:
     image: guacamole/guacamole
     container_name: guacamole-web
     restart: unless-stopped
     ports:
-      - $(GUAC-PORT):8080
+      - ${GUAC_PORT}:8080
     volumes:
-      - $(GUAC-DIR)/extensions/:/etc/guacamole/extensions/
+      - ${GUAC_DIR}/extensions/:/etc/guacamole/extensions/
     environment:
       - GUACD_HOSTNAME=guacd
-      - MYSQL_HOSTNAME=mysql
-      - MYSQL_DATABASE=guacamole_db
-      - MYSQL_USER=$(DB-USER)
-      - MYSQL_PASSWORD=$(DB-PASS)
+      - POSTGRES_HOSTNAME=postgres
+      - POSTGRES_DATABASE=guacamole_db
+      - POSTGRES_USER=${DB-USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
       - GUACAMOLE_HOME=/etc/guacamole/
     depends_on:
       guacd:
         condition: service_started
-      mysql:
-        condition: service_healthy
+      postgres:
+        condition: service_started
 
-  mysql:
-    image: mysql
-    container_name: guacamole-mysql
+  postgres:
+    image: postgres
+    container_name: guacamole-postgres
     restart: unless-stopped
     volumes:
-    - $(GUAC-DIR)/init/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
-    - $(GUAC-DIR)/db:/var/lib/mysql
+    - ${GUAC_DIR}/init/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+    - ${GUAC_DIR}/db:/var/lib/mysql
     environment:
-      - MYSQL_DATABASE=guacamole_db
-      - MYSQL_USER=$(DB-USER)
-      - MYSQL_PASSWORD=$(DB-PASS)
-      - MYSQL_ROOT_PASSWORD=$(DB-PASS)
-    healthcheck:
-      test: mysqladmin --password=$(DB-PASS) version
-      interval: 10s
-      timeout: 10s
-      retries: 6
+      - POSTGRES_DB=guacamole_db
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
