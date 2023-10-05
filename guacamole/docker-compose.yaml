@@ -29,8 +29,6 @@ services:
       mysql:
         condition: service_healthy
 
-  # docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --mysql > initdb.sql
-
   mysql:
     image: mysql
     container_name: guacamole-mysql
