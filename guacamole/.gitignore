@@ -1,0 +1,4 @@
+.env
+/guacamole-data/db
+/guacamole-data/drive
+/guacamole-data/record

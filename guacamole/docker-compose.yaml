@@ -1,0 +1,50 @@
+version: "3"
+services:
+  guacd:
+    image: guacamole/guacd
+    container_name: guacamole-daemon
+    restart: unless-stopped
+    volumes:
+      - $(GUAC-DIR)/drive:/drive:rw
+      - $(GUAC-DIR)/record:/record:rw
+
+  guacamole:
+    image: guacamole/guacamole
+    container_name: guacamole-web
+    restart: unless-stopped
+    ports:
+      - $(GUAC-PORT):8080
+    volumes:
+      - $(GUAC-DIR)/extensions/:/etc/guacamole/extensions/
+    environment:
+      - GUACD_HOSTNAME=guacd
+      - MYSQL_HOSTNAME=mysql
+      - MYSQL_DATABASE=guacamole_db
+      - MYSQL_USER=$(DB-USER)
+      - MYSQL_PASSWORD=$(DB-PASS)
+      - GUACAMOLE_HOME=/etc/guacamole/
+    depends_on:
+      guacd:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+
+  # docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --mysql > initdb.sql
+
+  mysql:
+    image: mysql
+    container_name: guacamole-mysql
+    restart: unless-stopped
+    volumes:
+    - $(GUAC-DIR)/init/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+    - $(GUAC-DIR)/db:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=guacamole_db
+      - MYSQL_USER=$(DB-USER)
+      - MYSQL_PASSWORD=$(DB-PASS)
+      - MYSQL_ROOT_PASSWORD=$(DB-PASS)
+    healthcheck:
+      test: mysqladmin --password=$(DB-PASS) version
+      interval: 10s
+      timeout: 10s
+      retries: 6
