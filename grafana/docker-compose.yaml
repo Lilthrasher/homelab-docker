@@ -1,9 +1,10 @@
 version: "3"
 services:
   grafana:
-    image: grafana/grafana-oss:latest
+    image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
+    user: "${GRAFANA_UID}"
     ports:
       - ${GRAFANA_PORT}:3000
     volumes:

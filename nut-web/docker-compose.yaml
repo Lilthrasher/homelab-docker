@@ -1,0 +1,15 @@
+version: "3"
+services:
+  nut-web:
+    image: teknologist/webnut:latest
+    container_name: nut-web
+    restart: unless-stopped
+    ports:
+      - ${PORT}:6453
+    environment:
+      - UPS_HOST=${UPS_HOST}
+      - UPS_PORT=${UPS_PORT}
+      - UPS_USER=${UPS_USER}
+      - UPS_PASSWORD=${PASS}
+    security_opt:
+      - no-new-privileges:true
