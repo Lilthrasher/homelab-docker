@@ -5,10 +5,8 @@ services:
     container_name: metube
     restart: unless-stopped
     ports:
-      - 3333:8081
+      - ${METUBE_PORT}:8081
     volumes:
       - ${METUBE_DIR}:/downloads
     environment:
       - YTDL_OPTIONS={"ignoreerrors":true}
-
-      #Test Pass
