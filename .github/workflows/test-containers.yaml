@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Test Containers With Changes:
+  Test:
     runs-on: self-hosted
 
     steps:
@@ -30,7 +30,7 @@ jobs:
           echo "Copying $file to temp..."
           cp -f "$file" temp/"$file"
         done
-        cd tmp/
+        cd temp/
 
         IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
         for file in "${FILES[@]}"; do
