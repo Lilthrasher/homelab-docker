@@ -58,9 +58,9 @@ jobs:
       - name: Send Push Notification on Fail
         if: failure()
         run: |
-        curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Deployment Failed" -H "Tags: skull" -d "$file Container Deployment Failed." ntfy.smithhomelab.com/Smith-Labs
+          curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Deployment Failed" -H "Tags: skull" -d "$file Container Deployment Failed." ntfy.smithhomelab.com/Smith-Labs
   
       - name: Send Push Notification on Success
         if: success()
         run: |
-        curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Container Redeployed" -H "Tags: tada" -d "$file Container Successfully Redeployed." ntfy.smithhomelab.com/Smith-Labs
+          curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Container Redeployed" -H "Tags: tada" -d "$file Container Successfully Redeployed." ntfy.smithhomelab.com/Smith-Labs
