@@ -36,8 +36,19 @@ jobs:
           service_name=$(dirname "$file" | xargs basename)
           echo "Updating $file..."
           if DEPLOY_OUTPUT=$(docker compose -f "$file" up -d --force-recreate 2>&1); then
-            curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Container Redeployed" -H "Tags: tada" -d "$service_name was redeployed successfully." ntfy.smithhomelab.com/Smith-Labs
+            curl \
+            -u ${{ secrets.NTFY_LOGIN }} \
+            -H "Title: Container Redeployed" \
+            -H "Tags: tada" \
+            -d "$service_name was redeployed successfully." \
+            ntfy.smithhomelab.com/Smith-Labs
           else
-            curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Redeployment Failed" -H "Tags: skull" -d "$service_name encountered an error while redeploying. OUTPUT:$(echo "$DEPLOY_OUTPUT" | cut -d':' -f2- | sed 's/^[ \t]*//;s/[ \t]*$//')" ntfy.smithhomelab.com/Smith-Labs
+            curl \
+            -u ${{ secrets.NTFY_LOGIN }} \
+            -H "Title: Redeployment Failed" \
+            -H "Tags: warning" \
+            -d "$service_name encountered an error while redeploying.
+            Error:$(echo "$DEPLOY_OUTPUT" | cut -d':' -f2- | sed 's/^[ \t]*//;s/[ \t]*$//')" \
+            ntfy.smithhomelab.com/Smith-Labs
           fi
         done
