@@ -26,6 +26,8 @@ jobs:
         for file in ${{ steps.changed-files.outputs.files }}; do
           echo "Copying $file to server..."
           rsync -R "$file" .
+          ls -l "$file"
+          ls -l "./$file"
         done
 
         for file in ${{ steps.changed-files.outputs.files }}; do
