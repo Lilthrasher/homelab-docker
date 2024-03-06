@@ -25,6 +25,12 @@ jobs:
           cd /home/kyle/docker-files/nut-web
           docker compose up -d --force-recreate
 
-      - name: Send Push Notification
+      - name: Send Push Notification on Fail
+        if: failure()
         run: |
-          curl -u ${{ secrets.NTFY_LOGIN }} -d "Nut Web Container Successfully Redeployed" ntfy.smithhomelab.com/Smith-Labs
+          curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Deployment Failed" -H "Tags: skull" -d "Nut Web Container Deployment Failed." ntfy.smithhomelab.com/Smith-Labs
+
+      - name: Send Push Notification on Success
+        if: success()
+        run: |
+          curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Container Redeployed" -H "Tags: tada" -d "Nut Web Container Successfully Redeployed." ntfy.smithhomelab.com/Smith-Labs
