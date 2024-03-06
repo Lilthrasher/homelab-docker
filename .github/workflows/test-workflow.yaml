@@ -1,86 +1,44 @@
-# Workflow name
-name: Auto-Update Docker Compose Services
+name: Deploy Docker Compose
 
-# Triggers the workflow on push events but only when Docker Compose files are changed.
-# This is specified by the paths filter which targets all Docker Compose files
-# in any first-level subdirectories.
 on:
   push:
     paths:
-      - '**/docker-compose*.yml'
-      - '**/docker-compose*.yaml'
+      - '**/*.yml' # Trigger the workflow on changes to YAML files
 
-# Defines a job named 'update-services' that runs on an Ubuntu latest runner.
 jobs:
-  update-services:
-    runs-on: "self-hosted"
+  deploy:
+    runs-on: self-hosted
+
     steps:
-      # Step 1: Checks out the current repository to the runner, making it
-      # possible to access its files.
-      - name: Check out the repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      # Step 2: Detects which Docker Compose files have changed in the recent push.
-      # This uses git commands to list changed files and filters them to include
-      # only Docker Compose files. The output (list of changed files) is set as
-      # an output variable for use in subsequent steps.
-      - name: Detect changed Docker Compose files
-        id: changed_files
-        run: |
-          # Fetch additional depth to ensure we have enough history for comparison.
-          git fetch --depth=50 || echo "Failed to fetch additional depth, proceeding with shallow history."
+    - name: Identify changed Docker Compose files
+      id: changed-files
+      run: |
+        CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.yml$' || true)
+        echo "::set-output name=files::$CHANGED_FILES"
 
-          # Attempt to find a common base for comparison. If unavailable, default to an empty string.
-          BASE_SHA=$(git merge-base FETCH_HEAD ${{ github.sha }} 2>/dev/null || echo "")
+    - name: Copy and deploy updated Docker Compose files
+      run: |
+        cp ${{ steps.changed-files.outputs.files }} /home/kyle/docker-files/
 
-          if [[ -z "$BASE_SHA" || "$BASE_SHA" == "${{ github.sha }}" ]]; then
-            # If there's no base SHA found, or if the base SHA is the same as the current SHA (unlikely edge case),
-            # list all Docker Compose files. This covers the first push scenario.
-            echo "Finding all Docker Compose files as no suitable base SHA found."
-            changed_compose_files=$(find . -type f -name 'docker-compose*.y*ml' -print | sed 's|^./||')
-          else
-            # Otherwise, use git diff with the determined base SHA to list only the changed Docker Compose files.
-            echo "Determining changed Docker Compose files based on git diff."
-            changed_compose_files=$(git diff --name-only "$BASE_SHA" ${{ github.sha }} | grep 'docker-compose.*\.y*ml$' || echo "")
-          fi
+    - name: SSH into the server and redeploy services
+      run: |
+        cd /home/kyle/docker-files/
+        for file in ${{ steps.changed-files.outputs.files }}; do
+            filename=$(basename "$file")
+            relative_path=$(dirname "$file")
+            echo "Updating $relative_path/$filename..."
+            docker-compose -f "$relative_path/$filename" up -d --force-recreate
+        done
 
-          # Check if any Docker Compose files were found/changed.
-          if [ -z "$changed_compose_files" ]; then
-            echo "No Docker Compose files were changed."
-            echo "::set-output name=files::"
-          else
-            echo "Changed Docker Compose files: $changed_compose_files"
-            echo "::set-output name=files::$changed_compose_files"
-          fi
+    - name: Send Push Notification on Fail
+      if: failure()
+      run: |
+        curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Deployment Failed" -H "Tags: skull" -d "Container Deployment Failed." ntfy.smithhomelab.com/Smith-Labs
 
-      # Step 3: Copies the updated Docker Compose files to the server and updates
-      # the services. This step only runs if there were changes detected in the
-      # Docker Compose files. It loops through each changed file, copies it to the
-      # server using SCP, and then connects to the server via SSH to run
-      # `docker-compose up -d` in the directory of the copied file. This command
-      # ensures only services affected by the configuration changes are restarted.
-      - name: Copy and update services for each changed Docker Compose file
-        if: steps.changed_files.outputs.files != ''
-        run: |
-          while IFS= read -r file; do
-            if [ ! -z "$file" ]; then
-              echo "Processing $file"
-              # Securely copy the updated Docker Compose file to the server
-              cp $file /home/kyle/docker-files/${file}
-
-              # Connect to the server and run docker-compose up -d within the directory
-              # containing the updated Docker Compose file. This command only recreates
-              # and restarts containers that have been changed.
-              cd /home/kyle/docker-files/$(dirname $file) && docker-compose up -d --force-recreate
-            fi
-          done <<< "${{ env.changed_compose_files }}"
-
-      - name: Send Push Notification on Fail
-        if: failure()
-        run: |
-          curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Deployment Failed" -H "Tags: skull" -d "$file Container Deployment Failed." ntfy.smithhomelab.com/Smith-Labs
-  
-      - name: Send Push Notification on Success
-        if: success()
-        run: |
-          curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Container Redeployed" -H "Tags: tada" -d "$file Container Successfully Redeployed." ntfy.smithhomelab.com/Smith-Labs
+    - name: Send Push Notification on Success
+      if: success()
+      run: |
+        curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Container Redeployed" -H "Tags: tada" -d "Container Successfully Redeployed." ntfy.smithhomelab.com/Smith-Labs
