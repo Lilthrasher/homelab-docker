@@ -5,7 +5,7 @@ services:
     container_name: homepage
     restart: unless-stopped
     ports:
-      - 1000:3000
+      - ${PAGE_PORT}:3000
     volumes:
       - /etc/timezone:/etc/timezone
       - ${DATA_DIR}:/app/config
