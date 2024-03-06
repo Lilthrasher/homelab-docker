@@ -32,7 +32,7 @@ jobs:
           filename=$(basename "$file")
           relative_path=$(dirname "$file")
           echo "Updating $relative_path/$filename..."
-          docker-compose -f "$relative_path/$filename" up -d --force-recreate
+          docker compose -f "$relative_path/$filename" up -d --force-recreate
         done
 
     - name: Send Push Notification on Fail
