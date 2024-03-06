@@ -24,3 +24,7 @@ jobs:
         run: |
           cd /home/kyle/docker-files/nut-web
           docker compose up -d --force-recreate
+
+      - name: Send Push Notification
+        run: |
+          curl -d "Nut Web Container Successfully Redeployed" ntfy.smithhomelab.com/Smith-Labs
