@@ -30,11 +30,10 @@ jobs:
         done
         cd /home/kyle/docker-files
 
-        for file in ${{ steps.changed-files.outputs.files }}; do
-          filename=$(basename "$file")
-          relative_path=$(dirname "$file")
-          echo "Updating $relative_path/$filename..."
-          docker compose -f "$relative_path/$filename" up -d --force-recreate
+        IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
+        #for file in "${FILES[@]}"; do
+          echo "Updating $file..."
+          docker compose -f "$file" up -d --force-recreate
         done
 
     - name: Send Push Notification on Fail
