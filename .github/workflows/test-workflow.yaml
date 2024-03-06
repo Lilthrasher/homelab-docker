@@ -37,7 +37,6 @@ jobs:
             curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Containers Redeployed" -H "Tags: tada" -d "Containers Successfully Redeployed." ntfy.smithhomelab.com/Smith-Labs
           else
             curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Deployment Failed" -H "Tags: skull" -d "Container Deployments Failed." ntfy.smithhomelab.com/Smith-Labs
-        done
 
     # - name: Send Push Notification on Fail
     #   if: failure()
