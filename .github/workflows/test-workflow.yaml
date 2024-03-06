@@ -25,7 +25,7 @@ jobs:
         cd /home/kyle/docker-files
         for file in ${{ steps.changed-files.outputs.files }}; do
           echo "Copying $file to server..."
-          cp -f --parents "$file" /home/kyle/docker-files/
+          cp "$file" /home/kyle/docker-files/
         done
 
         for file in ${{ steps.changed-files.outputs.files }}; do
