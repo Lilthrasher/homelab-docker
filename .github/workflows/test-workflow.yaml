@@ -27,22 +27,31 @@ jobs:
       - name: Detect changed Docker Compose files
         id: changed_files
         run: |
-          # Ensure we have a history for comparison
-          git fetch --depth=2
-          BASE_SHA=$(git merge-base FETCH_HEAD ${{ github.sha }} || echo "")
-          if [ -z "$BASE_SHA" ]; then
-            # This handles the edge case for the first push to a repository,
-            # where there is no prior commit to compare against.
+          # Fetch additional depth to ensure we have enough history for comparison.
+          git fetch --depth=50 || echo "Failed to fetch additional depth, proceeding with shallow history."
+
+          # Attempt to find a common base for comparison. If unavailable, default to an empty string.
+          BASE_SHA=$(git merge-base FETCH_HEAD ${{ github.sha }} 2>/dev/null || echo "")
+
+          if [[ -z "$BASE_SHA" || "$BASE_SHA" == "${{ github.sha }}" ]]; then
+            # If there's no base SHA found, or if the base SHA is the same as the current SHA (unlikely edge case),
+            # list all Docker Compose files. This covers the first push scenario.
+            echo "Finding all Docker Compose files as no suitable base SHA found."
             changed_compose_files=$(find . -type f -name 'docker-compose*.y*ml' -print | sed 's|^./||')
           else
-            # Use git diff with the base commit found using merge-base, or the previous commit
-            # if merge-base is not applicable. This ensures we only list changes relevant to the push.
-            changed_compose_files=$(git diff --name-only $BASE_SHA ${{ github.sha }} | grep 'docker-compose.*\.y*ml$')
+            # Otherwise, use git diff with the determined base SHA to list only the changed Docker Compose files.
+            echo "Determining changed Docker Compose files based on git diff."
+            changed_compose_files=$(git diff --name-only "$BASE_SHA" ${{ github.sha }} | grep 'docker-compose.*\.y*ml$' || echo "")
           fi
-          echo "changed_compose_files<<EOF" >> $GITHUB_ENV
-          echo "$changed_compose_files" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          echo "::set-output name=files::$changed_compose_files"
+
+          # Check if any Docker Compose files were found/changed.
+          if [ -z "$changed_compose_files" ]; then
+            echo "No Docker Compose files were changed."
+            echo "::set-output name=files::"
+          else
+            echo "Changed Docker Compose files: $changed_compose_files"
+            echo "::set-output name=files::$changed_compose_files"
+          fi
 
       # Step 3: Copies the updated Docker Compose files to the server and updates
       # the services. This step only runs if there were changes detected in the
