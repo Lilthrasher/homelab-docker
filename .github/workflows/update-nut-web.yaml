@@ -22,5 +22,5 @@ jobs:
 
       - name: Redeploy Container
         run: |
-          cd docker-files/nut-web
+          cd docker-files/nut-web/
           docker compose up -d --force-recreate
