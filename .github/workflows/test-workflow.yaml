@@ -16,7 +16,7 @@ jobs:
     - name: Identify changed Docker Compose files
       id: changed-files
       run: |
-        CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.yaml$' || true)
+        CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.before }} ${{ github.sha }} | grep '\.yaml$' | grep -vE '\.github/workflows/.*\.yaml$' || true)
         echo "Changed files: $CHANGED_FILES"
         echo "::set-output name=files::$CHANGED_FILES"
 
