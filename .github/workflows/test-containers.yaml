@@ -30,7 +30,7 @@ jobs:
           echo "Copying $file to temp..."
           cp -f "$file" temp/"$file"
         done
-        cd tmp/
+        cd temp/
 
         IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
         for file in "${FILES[@]}"; do
