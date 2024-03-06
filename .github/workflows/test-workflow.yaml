@@ -32,7 +32,7 @@ jobs:
 
         IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
         for file in "${FILES[@]}"; do
-          service_name=$(basename "$file" "/docker-compose.yaml")
+          service_name=$(dirname "$file" | xargs basename)
           echo "Updating $file..."
           if docker compose -f "$file" up -d --force-recreate; then
             curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Container Redeployed" -H "Tags: tada" -d "$service_name was redeployed successfully." ntfy.smithhomelab.com/Smith-Labs
