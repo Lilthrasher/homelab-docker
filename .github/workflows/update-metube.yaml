@@ -24,3 +24,7 @@ jobs:
         run: |
           cd /home/kyle/docker-files/metube
           docker compose up -d --force-recreate
+
+      - name: Send Push Notification
+        run: |
+          curl -u ${{ secrets.NTFY_LOGIN }} -d "Nut Web Container Successfully Redeployed" ntfy.smithhomelab.com/Smith-Labs
