@@ -21,16 +21,17 @@ jobs:
 
     - name: Copy and deploy updated Docker Compose files
       run: |
-        cp ${{ steps.changed-files.outputs.files }} /home/kyle/docker-files/${{ steps.changed-files.outputs.files }}
-
-    - name: SSH into the server and redeploy services
-      run: |
-        cd /home/kyle/docker-files/
+        cd /path/to/your/server/repository/
         for file in ${{ steps.changed-files.outputs.files }}; do
-            filename=$(basename "$file")
-            relative_path=$(dirname "$file")
-            echo "Updating $relative_path/$filename..."
-            docker-compose -f "$relative_path/$filename" up -d --force-recreate
+          echo "Copying $file to server..."
+          cp $file .
+        done
+
+        for file in ${{ steps.changed-files.outputs.files }}; do
+          filename=$(basename "$file")
+          relative_path=$(dirname "$file")
+          echo "Updating $relative_path/$filename..."
+          docker-compose -f "$relative_path/$filename" up -d --force-recreate
         done
 
     - name: Send Push Notification on Fail
