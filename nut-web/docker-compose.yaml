@@ -6,10 +6,12 @@ services:
     restart: unless-stopped
     ports:
       - ${PORT}:6453
-    environment:
+    enviroonment:
       - UPS_HOST=${UPS_HOST}
       - UPS_PORT=${UPS_PORT}
       - UPS_USER=${UPS_USER}
       - UPS_PASSWORD=${PASS}
     security_opt:
       - no-new-privileges:true
+
+    #Test Fail
