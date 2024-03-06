@@ -1,0 +1,26 @@
+name: Update Metube Docker Container
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "metube/docker-compose.yaml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: "self-hosted"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Copy yaml
+        run: |
+          cp ./metube/docker-compose.yaml /home/kyle/docker-files/metube/docker-compose.yaml
+
+      - name: Redeploy Container
+        run: |
+          cd /home/kyle/docker-files/metube
+          docker compose up -d --force-recreate
