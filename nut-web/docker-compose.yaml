@@ -13,3 +13,5 @@ services:
       - UPS_PASSWORD=${PASS}
     security_opt:
       - no-new-privileges:true
+
+#This is a test
