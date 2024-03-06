@@ -1,7 +1,7 @@
 name: Redeploy Containers With Changes
 
 on:
-  pull:
+  pull_request:
     paths:
       - '**/docker-compose.yaml' # Trigger the workflow on changes to YAML files
   workflow_dispatch:
