@@ -1,12 +1,13 @@
-name: Deploy Docker Compose
+name: Redeploy Containers With Changes
 
 on:
   push:
     paths:
       - '**/docker-compose.yaml' # Trigger the workflow on changes to YAML files
+  workflow-dispatch:
 
 jobs:
-  deploy:
+  Redeploy Containers With Changes:
     runs-on: self-hosted
 
     steps:
