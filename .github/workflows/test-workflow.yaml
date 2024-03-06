@@ -31,7 +31,7 @@ jobs:
         cd /home/kyle/docker-files
 
         IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
-        #for file in "${FILES[@]}"; do
+        for file in "${FILES[@]}"; do
           echo "Updating $file..."
           docker compose -f "$file" up -d --force-recreate
         done
