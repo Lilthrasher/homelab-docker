@@ -21,7 +21,7 @@ jobs:
 
     - name: Copy and deploy updated Docker Compose files
       run: |
-        cp "${{ steps.changed-files.outputs.files }}" /home/kyle/docker-files/
+        cp ${{ steps.changed-files.outputs.files }} /home/kyle/docker-files/
 
     - name: SSH into the server and redeploy services
       run: |
