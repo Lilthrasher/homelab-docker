@@ -17,6 +17,7 @@ jobs:
       id: changed-files
       run: |
         CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.yml$' || true)
+        echo "Changed files: $CHANGED_FILES"
         echo "::set-output name=files::$CHANGED_FILES"
 
     - name: Copy and deploy updated Docker Compose files
