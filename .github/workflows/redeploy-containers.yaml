@@ -35,9 +35,9 @@ jobs:
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
           echo "Updating $file..."
-          if docker compose -f "$file" up -d --force-recreate; then
+          if DEPLOY_OUTPUT=$(docker compose -f "$file" up -d --force-recreate 2>&1); then
             curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Container Redeployed" -H "Tags: tada" -d "$service_name was redeployed successfully." ntfy.smithhomelab.com/Smith-Labs
           else
-            curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Redeployment Failed" -H "Tags: skull" -d "$service_name encountered an error while redeploying." ntfy.smithhomelab.com/Smith-Labs
+            curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Redeployment Failed" -H "Tags: skull" -d "$service_name encountered an error while redeploying. OUTPUT:$DEPLOY_OUTPUT" ntfy.smithhomelab.com/Smith-Labs
           fi
         done
