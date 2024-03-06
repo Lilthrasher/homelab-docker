@@ -33,12 +33,10 @@ jobs:
         IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
         for file in "${FILES[@]}"; do
           echo "Updating $file..."
-          docker compose -f "$file" up -d --force-recreate
-            if: failure()
-              curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Deployment Failed" -H "Tags: skull" -d "Container Deployments Failed." ntfy.smithhomelab.com/Smith-Labs
-            if: success()
-              curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Containers Redeployed" -H "Tags: tada" -d "Containers Successfully Redeployed." ntfy.smithhomelab.com/Smith-Labs
-        done
+          if docker-compose -f "$file" up -d --force-recreate; then
+            curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Containers Redeployed" -H "Tags: tada" -d "Containers Successfully Redeployed." ntfy.smithhomelab.com/Smith-Labs        done
+          else
+            curl -u ${{ secrets.NTFY_LOGIN }} -H "Title: Deployment Failed" -H "Tags: skull" -d "Container Deployments Failed." ntfy.smithhomelab.com/Smith-Labs
 
     # - name: Send Push Notification on Fail
     #   if: failure()
