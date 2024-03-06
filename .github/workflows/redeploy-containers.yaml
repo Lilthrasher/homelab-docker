@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - '**/docker-compose.yaml' # Trigger the workflow on changes to YAML files
-  workflow-dispatch:
+  workflow_dispatch:
 
 jobs:
   Redeploy Containers With Changes:
