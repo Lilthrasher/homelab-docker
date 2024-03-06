@@ -3,7 +3,7 @@ name: Deploy Docker Compose
 on:
   push:
     paths:
-      - '**/*.yml' # Trigger the workflow on changes to YAML files
+      - '**/docker-compose.yaml' # Trigger the workflow on changes to YAML files
 
 jobs:
   deploy:
