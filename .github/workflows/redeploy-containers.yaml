@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Redeploy Containers With Changes:
+  Redeploy:
     runs-on: self-hosted
 
     steps:
