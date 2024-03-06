@@ -1,4 +1,4 @@
-name: Redeploy Containers With Changes
+name: Test Containers With Changes
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Redeploy Containers With Changes:
+  Test Containers With Changes:
     runs-on: self-hosted
 
     steps:
