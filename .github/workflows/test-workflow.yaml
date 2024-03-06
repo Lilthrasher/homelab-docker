@@ -17,8 +17,9 @@ jobs:
       id: changed-files
       run: |
         CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.before }} ${{ github.sha }} | grep '\.yaml$' | grep -vE '\.github/workflows/.*\.yaml$' || true)
-        echo "Changed files: $CHANGED_FILES"
-        echo "::set-output name=files::$CHANGED_FILES"
+        CHANGED_FILES_CSV=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
+        echo "Changed files: $CHANGED_FILES_CSV"
+        echo "::set-output name=files::$CHANGED_FILES_CSV"
 
     - name: Copy and deploy updated Docker Compose files
       run: |
@@ -32,8 +33,8 @@ jobs:
         for file in ${{ steps.changed-files.outputs.files }}; do
           filename=$(basename "$file")
           relative_path=$(dirname "$file")
-          echo "Updating $relative_path/$filename..."
-          docker compose -f "$relative_path/$filename" up -d --force-recreate
+          echo "Updating $filename..."
+          docker compose -f "$filename" up -d --force-recreate
         done
 
     - name: Send Push Notification on Fail
