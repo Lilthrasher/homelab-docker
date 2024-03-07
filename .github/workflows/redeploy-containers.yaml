@@ -2,6 +2,8 @@ name: Redeploy Containers With Changes
 
 on:
   push:
+    branches:
+      - main
     paths:
       - '**/docker-compose.yaml' # Trigger the workflow on changes to YAML files
   workflow_dispatch:
@@ -24,6 +26,7 @@ jobs:
 
     - name: Copy and deploy updated Docker Compose files
       run: |
+        pwd
         IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
         for file in "${FILES[@]}"; do
           echo "Copying $file to server..."
