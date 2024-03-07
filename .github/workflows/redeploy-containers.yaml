@@ -30,7 +30,6 @@ jobs:
 
     - name: Copy and Test Docker Container Changes
       run: |
-        #/home/kyle/actions-runner/_work/homelab-docker/homelab-docker
         mkdir temp/
         IFS=',' read -ra FILES <<< "$CHANGED_FILES_CSV"
         for file in "${FILES[@]}"; do
