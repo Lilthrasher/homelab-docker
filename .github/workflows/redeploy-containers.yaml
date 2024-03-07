@@ -12,6 +12,10 @@ jobs:
   Redeploy:
     runs-on: self-hosted
 
+    # env:
+    #   CHANGED_FILES_CSV: ""
+    #   SUCCESSFUL_CONTAINERS: ""
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -22,19 +26,51 @@ jobs:
         CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.before }} ${{ github.sha }} | grep '\.yaml$' | grep -vE '\.github/workflows/.*\.yaml$' || true)
         CHANGED_FILES_CSV=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
         echo "Changed files: $CHANGED_FILES_CSV"
-        echo "::set-output name=files::$CHANGED_FILES_CSV"
+        #echo "::set-output name=files::$CHANGED_FILES_CSV"
 
-    - name: Copy and deploy updated Docker Compose files
+    - name: Copy and Test Docker Container Changes
       run: |
-        pwd
-        IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
+        #/home/kyle/actions-runner/_work/homelab-docker/homelab-docker
+        mkdir temp/
+        IFS=',' read -ra FILES <<< "$CHANGED_FILES_CSV"
+        for file in "${FILES[@]}"; do
+          echo "Copying $file to temp/..."
+          cp -f "$file" temp/"$file"
+        done
+        cd temp/
+
+        IFS=',' read -ra FILES <<< "$CHANGED_FILES_CSV"
+        for file in "${FILES[@]}"; do
+          service_name=$(dirname "$file" | xargs basename)
+          echo "Testing $file..."
+          if DEPLOY_OUTPUT=$(docker compose -f "$file" up -d --force-recreate 2>&1); then
+            SUCCESSFUL_CONTAINERS+="$file,"
+            docker compose down
+            echo "Test Passed"
+          else
+            curl \
+              -u ${{ secrets.NTFY_LOGIN }} \
+              -H "Title: Redeployment Failed" \
+              -H "Tags: warning" \
+              -H "Content-Type: text/plain" \
+              -d "$service_name encountered an error while testing.
+              Error: $(echo "$DEPLOY_OUTPUT" | cut -d':' -f2- | sed 's/^[ \t]*//;s/[ \t]*$//')" \
+              ${{ secrets.NTFY_URL }}
+              exit 1
+          fi
+        done
+
+    - name: Copy and Deploy Passing Containers
+      run: |
+        cd /home/kyle/actions-runner/_work/homelab-docker/homelab-docker
+        IFS=',' read -ra FILES <<< "$SUCCESSFUL_CONTAINERS"
         for file in "${FILES[@]}"; do
           echo "Copying $file to server..."
           cp -f "$file" /home/kyle/docker-files/"$file"
         done
-        cd /home/kyle/docker-files
+        cd /home/kyle/docker-files/
 
-        IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
+        IFS=',' read -ra FILES <<< "$SUCCESSFUL_CONTAINERS"
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
           echo "Updating $file..."
