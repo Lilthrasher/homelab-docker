@@ -26,19 +26,19 @@ jobs:
         CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.before }} ${{ github.sha }} | grep '\.yaml$' | grep -vE '\.github/workflows/.*\.yaml$' || true)
         CHANGED_FILES_CSV=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
         echo "Changed files: $CHANGED_FILES_CSV"
-        #echo "::set-output name=files::$CHANGED_FILES_CSV"
+        echo "files=$CHANGED_FILES_CSV" >> $GITHUB_OUTPUT
 
     - name: Copy and Test Docker Container Changes
       run: |
         mkdir temp/
-        IFS=',' read -ra FILES <<< "$CHANGED_FILES_CSV"
+        IFS=',' read -ra FILES <<< "$GITHUB_OUTPUT"
         for file in "${FILES[@]}"; do
           echo "Copying $file to temp/..."
           cp -f "$file" temp/"$file"
         done
         cd temp/
 
-        IFS=',' read -ra FILES <<< "$CHANGED_FILES_CSV"
+        IFS=',' read -ra FILES <<< "$GITHUB_OUTPUT"
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
           echo "Testing $file..."
