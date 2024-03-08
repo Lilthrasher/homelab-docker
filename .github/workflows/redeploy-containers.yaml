@@ -30,7 +30,7 @@ jobs:
 
     - name: Copy and Test Docker Container Changes
       run: |
-        mkdir /home/kyle/docker-temp/
+        mkdir -p /home/kyle/docker-temp/
         IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
         for file in "${FILES[@]}"; do
           echo "Copying $file to temporary folder..."
