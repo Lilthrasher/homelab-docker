@@ -30,7 +30,7 @@ jobs:
 
     - name: Copy and Test Docker Container Changes
       run: |
-        mkdir temp/
+        mkdir temp
         IFS=',' read -ra FILES <<< "$GITHUB_OUTPUT"
         for file in "${FILES[@]}"; do
           echo "Copying $file to temp/..."
