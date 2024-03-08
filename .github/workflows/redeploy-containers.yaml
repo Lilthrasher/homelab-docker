@@ -30,10 +30,11 @@ jobs:
 
     - name: Copy and Test Docker Container Changes
       run: |
+        mkdir /home/kyle/docker-temp/
         IFS=',' read -ra FILES <<< "$CHANGED_FILES_CSV"
         for file in "${FILES[@]}"; do
           echo "Copying $file to temporary folder..."
-          cp -rf "$file" /home/kyle/docker-temp/"$file"
+          cp -f "$file" /home/kyle/docker-temp/"$file"
         done
         cd /home/kyle/docker-temp/
 
