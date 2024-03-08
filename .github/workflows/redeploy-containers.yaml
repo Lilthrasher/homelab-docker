@@ -33,7 +33,7 @@ jobs:
         IFS=',' read -ra FILES <<< "$CHANGED_FILES_CSV"
         for file in "${FILES[@]}"; do
           echo "Copying $file to temporary folder..."
-          cp -f "$file" /home/kyle/docker-temp/"$file"
+          cp -rf "$file" /home/kyle/docker-temp/"$file"
         done
         cd /home/kyle/docker-temp/
 
