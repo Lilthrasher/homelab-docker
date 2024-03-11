@@ -1,4 +1,4 @@
-name: Redeploy Containers With Changes
+name: Redeploy Containers With Changes Debug
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Redeploy:
+  Redeploy_Debug:
     runs-on: self-hosted
 
     steps:
