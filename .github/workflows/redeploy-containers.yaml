@@ -20,9 +20,7 @@ jobs:
       id: changed-containers
       run: |
         CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.before }} ${{ github.sha }} | grep '\.yaml$' | grep -vE '\.github/workflows/.*\.yaml$' || true)
-        echo "Changed Containers: $CHANGED_FILES"
         CHANGED_FILES_CSV=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
-        echo "Changed Containers: $CHANGED_FILES_CSV"
         #echo "::set-output name=files::$CHANGED_FILES_CSV"
         echo "CHANGED_CONTAINERS=$CHANGED_FILES_CSV" >> "$GITHUB_OUTPUT"
 
