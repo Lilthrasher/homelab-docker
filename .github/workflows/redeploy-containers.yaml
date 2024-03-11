@@ -30,15 +30,11 @@ jobs:
         IFS=',' read -ra FILES <<< "$CHANGED_CONTAINERS"
         echo "$CHANGED_CONTAINERS"
         for file in "${FILES[@]}"; do
+          service_name=$(dirname "$file" | xargs basename)
           echo "Copying $file to server..."
           cp -f "$file" /home/kyle/docker-files/"$file"
-        done
-        cd /home/kyle/docker-files
-
-        for file in "${FILES[@]}"; do
-          service_name=$(dirname "$file" | xargs basename)
           echo "Updating $service_name..."
-          if DEPLOY_OUTPUT=$(docker compose -f "$file" up -d --force-recreate 2>&1); then
+          if DEPLOY_OUTPUT=$(docker compose -f /home/kyle/docker-files/"$file" up -d --force-recreate 2>&1); then
             curl \
               -u ${{ secrets.NTFY_LOGIN }} \
               -H "Title: Container Redeployed" \
