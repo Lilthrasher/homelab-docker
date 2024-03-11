@@ -26,14 +26,17 @@ jobs:
         CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.before }} ${{ github.sha }} | grep '\.yaml$' | grep -vE '\.github/workflows/.*\.yaml$' || true)
         CHANGED_CONTAINERS_CSV=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
         echo "CHANGED_CONTAINERS=$CHANGED_CONTAINERS_CSV" >> "$GITHUB_OUTPUT"
-        echo "$CHANGED_CONTAINERS_CSV"
+        echo "$CHANGED_FILES"
+
+    - name: Set Initial Variables
+      run: |
+        echo "SUCCESSFUL_CONTAINERS=" >> "$GITHUB_ENV"
+        echo "FAILED_CONTAINERS=" >> "$GITHUB_ENV"
 
     - name: Copy and deploy updated Docker Compose files
       env:
         CHANGED_CONTAINERS: ${{ steps.changed-containers.outputs.CHANGED_CONTAINERS }}
       run: |
-        echo "SUCCESSFUL_CONTAINERS=" >> "$GITHUB_ENV"
-        echo "FAILED_CONTAINERS=" >> "$GITHUB_ENV"
         IFS=',' read -ra FILES <<< "$CHANGED_CONTAINERS"
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
