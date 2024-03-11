@@ -48,7 +48,7 @@ jobs:
         SUCCESSFUL_CONTAINERS=$(echo "$SUCCESSFUL_CONTAINERS" | tr '\n' ',' | sed 's/,$//')
         echo "Successful Containers: $SUCCESSFUL_CONTAINERS"
         echo "SUCCESSFULY_DEPLOYED=$SUCCESSFUL_CONTAINERS" >> $GITHUB_OUTPUT
-        FAILED_CONTAINERS=$(echo "$SUCCESSFUL_CONTAINERS" | tr '\n' ',' | sed 's/,$//')
+        FAILED_CONTAINERS=$(echo "$FAILED_CONTAINERS" | tr '\n' ',' | sed 's/,$//')
         echo "Failed Containers: $FAILED_CONTAINERS"
         echo "FAILED_DEPLOYED=$FAILED_CONTAINERS" >> $GITHUB_OUTPUT
 
