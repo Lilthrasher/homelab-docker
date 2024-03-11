@@ -38,10 +38,10 @@ jobs:
           cp -f "$file" /home/kyle/docker-files/"$file"
           echo "Updating $service_name..."
           if DEPLOY_OUTPUT=$(docker compose -f /home/kyle/docker-files/"$file" up -d --force-recreate 2>&1); then
-            SUCCESSFUL_CONTAINERS+=$service_name","
+            SUCCESSFUL_CONTAINERS+=$service_name"," 
             echo "$service_name Deployed Successfully"
           else
-            FAILED_CONTAINERS+=$service_name","
+            FAILED_CONTAINERS+=$service_name"," 
             echo "$service_name Failed To Deploy"
           fi
         done
