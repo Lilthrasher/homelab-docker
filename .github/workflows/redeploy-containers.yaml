@@ -22,7 +22,7 @@ jobs:
         CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.before }} ${{ github.sha }} | grep '\.yaml$' | grep -vE '\.github/workflows/.*\.yaml$' || true)
         CHANGED_CONTAINERS_CSV=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
         echo "CHANGED_CONTAINERS=$CHANGED_CONTAINERS_CSV" >> "$GITHUB_OUTPUT"
-        echo "$CHANGED_FILES"
+        echo "$CHANGED_CONTAINERS_CSV"
 
     - name: Copy and deploy updated Docker Compose files
       id: deploy-containers
