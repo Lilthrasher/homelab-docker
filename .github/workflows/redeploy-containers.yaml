@@ -17,23 +17,27 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Identify changed Docker Compose files
-      id: changed-files
+      id: changed-containers
       run: |
         CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.before }} ${{ github.sha }} | grep '\.yaml$' | grep -vE '\.github/workflows/.*\.yaml$' || true)
+        echo "Changed Containers: $CHANGED_FILES"
         CHANGED_FILES_CSV=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
-        echo "Changed files: $CHANGED_FILES_CSV"
-        echo "::set-output name=files::$CHANGED_FILES_CSV"
+        echo "Changed Containers: $CHANGED_FILES_CSV"
+        #echo "::set-output name=files::$CHANGED_FILES_CSV"
+        echo "CHANGED_CONTAINERS=$CHANGED_FILES_CSV" >> "$GITHUB_OUTPUT"
 
     - name: Copy and deploy updated Docker Compose files
+      env:
+        CHANGED_CONTAINERS: ${{ steps.changed-containers.outputs.CHANGED_CONTAINERS }}
       run: |
-        IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
+        IFS=',' read -ra FILES <<< "$CHANGED_CONTAINERS"
         for file in "${FILES[@]}"; do
           echo "Copying $file to server..."
           cp -f "$file" /home/kyle/docker-files/"$file"
         done
         cd /home/kyle/docker-files
 
-        IFS=',' read -ra FILES <<< "${{ steps.changed-files.outputs.files }}"
+        IFS=',' read -ra FILES <<< "$CHANGED_CONTAINERS"
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
           echo "Updating $file..."
