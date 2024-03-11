@@ -12,6 +12,10 @@ jobs:
   Redeploy:
     runs-on: self-hosted
 
+    env:
+      SUCCESSFUL_CONTAINERS: ""
+      FAILED_CONTAINERS: ""
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -37,13 +41,13 @@ jobs:
           cp -f "$file" /home/kyle/docker-files/"$file"
           echo "Updating $service_name..."
           if DEPLOY_OUTPUT=$(docker compose -f /home/kyle/docker-files/"$file" up -d --force-recreate 2>&1); then
-            echo "SUCCESSFUL_CONTAINERS=$SUCCESSFUL_CONTAINERS $service_name" >> "$GITHUB_ENV"
+            echo "SUCCESSFUL_CONTAINERS=${{ env.SUCCESSFUL_CONTAINERS }} $service_name" >> "$GITHUB_ENV"
           else
-            echo "FAILED_CONTAINERS=$FAILED_CONTAINERS $service_name" >> "$GITHUB_ENV"
+            echo "FAILED_CONTAINERS=${{ env.FAILED_CONTAINERS }} $service_name" >> "$GITHUB_ENV"
           fi
         done
-        echo "Successful Containers: $SUCCESSFUL_CONTAINERS"
-        echo "Failed Containers: $FAILED_CONTAINERS"
+        echo "Successful Containers: ${{ env.SUCCESSFUL_CONTAINERS }}"
+        echo "Failed Containers: ${{ env.FAILED_CONTAINERS }}"
 
         # curl \
         # -u ${{ secrets.NTFY_LOGIN }} \
