@@ -13,7 +13,6 @@ jobs:
     runs-on: self-hosted
 
     env:
-      CHANGED_CONTAINERS: ${{ steps.changed-containers.outputs.CHANGED_CONTAINERS }}
       SUCCESSFUL_CONTAINERS: ""
       FAILED_CONTAINERS: ""
 
@@ -30,6 +29,8 @@ jobs:
         echo "$CHANGED_CONTAINERS_CSV"
 
     - name: Copy and deploy updated Docker Compose files
+      env:
+        CHANGED_CONTAINERS: ${{ steps.changed-containers.outputs.CHANGED_CONTAINERS }}
       run: |
         echo "SUCCESSFUL_CONTAINERS=" >> "$GITHUB_ENV"
         echo "FAILED_CONTAINERS=" >> "$GITHUB_ENV"
