@@ -35,8 +35,6 @@ jobs:
         done
         cd /home/kyle/docker-files
 
-        IFS=',' read -ra FILES <<< "$CHANGED_CONTAINERS"
-        echo "$CHANGED_CONTAINERS"
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
           echo "Updating $service_name..."
