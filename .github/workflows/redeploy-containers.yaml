@@ -13,8 +13,8 @@ jobs:
     runs-on: self-hosted
 
     env:
-      SUCCESSFUL_CONTAINERS: ""
-      FAILED_CONTAINERS: ""
+      SUCCESSFUL_CONTAINERS: ''
+      FAILED_CONTAINERS: ''
 
     steps:
     - name: Checkout code
