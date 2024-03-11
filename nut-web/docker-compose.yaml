@@ -4,7 +4,7 @@ services:
     image: teknologist/webnut:latest
     container_name: nut-web
     restart: unless-stopped
-    poooooorts:
+    poorts:
       - ${PORT}:6453
     environment:
       - UPS_HOST=${UPS_HOST}
