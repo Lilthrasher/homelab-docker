@@ -45,12 +45,12 @@ jobs:
             echo "$service_name Failed To Deploy"
           fi
         done
-        SUCCESSFUL_CONTAINERS_CSV=$(echo "$SUCCESSFUL_CONTAINERS" | tr '\n' ',' | sed 's/,$//')
-        echo "Successful Containers: $SUCCESSFUL_CONTAINERS_CSV"
-        echo "SUCCESSFULY_DEPLOYED=$SUCCESSFUL_CONTAINERS_CSV" >> $GITHUB_OUTPUT
-        FAILED_CONTAINERS_CSV=$(echo "$FAILED_CONTAINERS" | tr '\n' ',' | sed 's/,$//')
-        echo "failed Containers: $FAILED_CONTAINERS_CSV"
-        echo "FAILED_DEPLOYED=$FAILED_CONTAINERS_CSV" >> "$GITHUB_OUTPUT"
+        SUCCESSFUL_CONTAINERS=$(SUCCESSFUL_CONTAINERS%,)
+        echo "Successful Containers: $SUCCESSFUL_CONTAINERS"
+        echo "SUCCESSFULY_DEPLOYED=$SUCCESSFUL_CONTAINERS" >> $GITHUB_OUTPUT
+        FAILED_CONTAINERS=$(FAILED_CONTAINERS%,)
+        echo "Failed Containers: $FAILED_CONTAINERS"
+        echo "FAILED_DEPLOYED=$FAILED_CONTAINERS" >> $GITHUB_OUTPUT
 
     - name: Send Notification on Fail
       env:
