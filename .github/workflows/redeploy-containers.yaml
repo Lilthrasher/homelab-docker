@@ -12,10 +12,6 @@ jobs:
   Redeploy:
     runs-on: self-hosted
 
-    env:
-      SUCCESSFUL_CONTAINERS: ''
-      FAILED_CONTAINERS: ''
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -28,15 +24,12 @@ jobs:
         echo "CHANGED_CONTAINERS=$CHANGED_CONTAINERS_CSV" >> "$GITHUB_OUTPUT"
         echo "$CHANGED_FILES"
 
-    - name: Set Initial Variables
-      run: |
-        echo "SUCCESSFUL_CONTAINERS=" >> $GITHUB_ENV
-        echo "FAILED_CONTAINERS=" >> $GITHUB_ENV
-
     - name: Copy and deploy updated Docker Compose files
       env:
         CHANGED_CONTAINERS: ${{ steps.changed-containers.outputs.CHANGED_CONTAINERS }}
       run: |
+        SUCCESSFUL_CONTAINERS=''
+        FAILED_CONTAINERS=''
         IFS=',' read -ra FILES <<< "$CHANGED_CONTAINERS"
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
@@ -44,13 +37,15 @@ jobs:
           cp -f "$file" /home/kyle/docker-files/"$file"
           echo "Updating $service_name..."
           if DEPLOY_OUTPUT=$(docker compose -f /home/kyle/docker-files/"$file" up -d --force-recreate 2>&1); then
-            echo "SUCCESSFUL_CONTAINERS=${{ env.SUCCESSFUL_CONTAINERS }} $service_name" >> $GITHUB_ENV
+            SUCCESSFUL_CONTAINERS+=$service_name+","
+            echo SUCCESSFUL_CONTAINERS
           else
-            echo "FAILED_CONTAINERS=${{ env.FAILED_CONTAINERS }} $service_name" >> $GITHUB_ENV
+            FAILED_CONTAINERS+=$service_name+","
+            echo FAILED_CONTAINERS
           fi
         done
-        echo "Successful Containers: ${{ env.SUCCESSFUL_CONTAINERS }}"
-        echo "Failed Containers: ${{ env.FAILED_CONTAINERS }}"
+        echo "Successful Containers: $SUCCESSFUL_CONTAINERS"
+        echo "Failed Containers: $FAILED_CONTAINERS"
 
         # curl \
         # -u ${{ secrets.NTFY_LOGIN }} \
