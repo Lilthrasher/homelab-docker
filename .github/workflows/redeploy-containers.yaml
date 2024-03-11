@@ -25,6 +25,7 @@ jobs:
         echo "$CHANGED_FILES"
 
     - name: Copy and deploy updated Docker Compose files
+      id: deploy-containers
       env:
         CHANGED_CONTAINERS: ${{ steps.changed-containers.outputs.CHANGED_CONTAINERS }}
       run: |
@@ -44,8 +45,26 @@ jobs:
             echo "$service_name Failed To Deploy"
           fi
         done
-        echo "Successful Containers: $SUCCESSFUL_CONTAINERS"
-        echo "Failed Containers: $FAILED_CONTAINERS"
+        SUCCESSFUL_CONTAINERS_CSV=$(echo "$SUCCESSFUL_CONTAINERS" | tr '\n' ',' | sed 's/,$//')
+        echo "Successful Containers: $SUCCESSFUL_CONTAINERS_CSV"
+        echo "SUCCESSFULY_DEPLOYED=$SUCCESSFUL_CONTAINERS_CSV" >> $GITHUB_OUTPUT
+        FAILED_CONTAINERS_CSV=$(echo "$FAILED_CONTAINERS" | tr '\n' ',' | sed 's/,$//')
+        echo "failed Containers: $FAILED_CONTAINERS_CSV"
+        echo "FAILED_DEPLOYED=$FAILED_CONTAINERS_CSV" >> "$GITHUB_OUTPUT"
+
+    - name: Send Notification on Fail
+      env:
+        SUCCESSFULY_DEPLOYED: ${{ steps.deploy-containers.outputs.SUCCESSFULY_DEPLOYED }}
+        FAILED_DEPLOYED: ${{ steps.deploy-containers.outputs.FAILED_DEPLOYED }}
+      if: ${{ steps.deploy-containers.outputs.FAILED_DEPLOYED != '' }}
+      run: |
+        curl \
+        -u ${{ secrets.NTFY_LOGIN }} \
+        -H "Title: Redeployment Failed" \
+        -H "Tags: warning" \
+        -H "Content-Type: text/plain" \
+        -d "$FAILED_DEPLOYED encountered an error while redeploying." \
+        ${{ secrets.NTFY_URL }}
 
         # curl \
         # -u ${{ secrets.NTFY_LOGIN }} \
