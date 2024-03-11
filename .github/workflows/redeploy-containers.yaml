@@ -45,10 +45,10 @@ jobs:
             echo "$service_name Failed To Deploy"
           fi
         done
-        SUCCESSFUL_CONTAINERS=$(echo -n "$SUCCESSFUL_CONTAINERS" | sed -e 's/,[[:space:]]*$//')"
+        SUCCESSFUL_CONTAINERS=$(echo "$SUCCESSFUL_CONTAINERS" | sed -e 's/,[[:space:]]*$//')"
         echo "Successful Containers: $SUCCESSFUL_CONTAINERS"
         echo "SUCCESSFULY_DEPLOYED=$SUCCESSFUL_CONTAINERS" >> $GITHUB_OUTPUT
-        FAILED_CONTAINERS=$(echo -n "$FAILED_CONTAINERS" | sed -e 's/,[[:space:]]*$//')"
+        FAILED_CONTAINERS=$(echo "$FAILED_CONTAINERS" | sed -e 's/,[[:space:]]*$//')"
         echo "Failed Containers: $FAILED_CONTAINERS"
         echo "FAILED_DEPLOYED=$FAILED_CONTAINERS" >> $GITHUB_OUTPUT
 
