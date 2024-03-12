@@ -29,6 +29,8 @@ jobs:
       env:
         CHANGED_CONTAINERS: ${{ steps.changed-containers.outputs.CHANGED_CONTAINERS }}
       run: |
+        SUCCESSFUL_CONTAINERS=0
+        FAILED_CONTAINERS=0
         IFS=',' read -ra FILES <<< "$CHANGED_CONTAINERS"
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
