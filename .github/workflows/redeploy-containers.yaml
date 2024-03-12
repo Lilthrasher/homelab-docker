@@ -44,6 +44,7 @@ jobs:
             -d "$service_name was redeployed successfully." \
             ${{ secrets.NTFY_URL }}
             echo "$service_name Deployed Successfully"
+            SUCCESSFUL_CONTAINERS=$(($SUCCESSFUL_CONTAINERS + 1))
           else
             curl \
             -u ${{ secrets.NTFY_LOGIN }} \
@@ -56,6 +57,8 @@ jobs:
             echo "$service_name Failed To Deploy"
             FAILED_CONTAINERS=$(($FAILED_CONTAINERS + 1))
           fi
+          echo "Successful Containers: $SUCCESSFUL_CONTAINERS"
+          echo "SUCCESSFUL_CONTAINERS=$SUCCESSFUL_CONTAINERS" >> "$GITHUB_OUTPUT"
           echo "Failed Containers: $FAILED_CONTAINERS"
           echo "FAILED_CONTAINERS=$FAILED_CONTAINERS" >> "$GITHUB_OUTPUT"
         done
