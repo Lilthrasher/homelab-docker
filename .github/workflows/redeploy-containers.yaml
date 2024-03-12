@@ -62,7 +62,7 @@ jobs:
 
     - name: Exit Job On Failed Deployment
       env:
-        FAILED_CONTAINERS ${{ steps.deploy-containers.outputs.FAILED_DEPLOYED }}
+        FAILED_CONTAINERS: ${{ steps.deploy-containers.outputs.FAILED_DEPLOYED }}
       if: ${{ steps.deploy-containers.outputs.FAILED_DEPLOYED != '' }}
       run: |
         exit 1
