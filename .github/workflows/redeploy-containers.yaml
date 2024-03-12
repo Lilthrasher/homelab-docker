@@ -58,6 +58,7 @@ jobs:
             FAILED_CONTAINERS+=1
             echo "FAILED_CONTAINERS=$FAILED_CONTAINERS" >> "$GITHUB_OUTPUT"
           fi
+          echo "Failed Containers: $FAILED_CONTAINERS"
         done
 
     - name: Exit Job On Failed Deployment
