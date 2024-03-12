@@ -54,7 +54,7 @@ jobs:
             Error: $(echo "$DEPLOY_OUTPUT" | cut -d':' -f2- | sed 's/^[ \t]*//;s/[ \t]*$//')" \
             ${{ secrets.NTFY_URL }}
             echo "$service_name Failed To Deploy"
-            FAILED_CONTAINERS=$(FAILED_CONTAINERS + 1)
+            FAILED_CONTAINERS=$($FAILED_CONTAINERS + 1)
           fi
           echo "Failed Containers: $FAILED_CONTAINERS"
           echo "FAILED_CONTAINERS=$FAILED_CONTAINERS" >> "$GITHUB_OUTPUT"
