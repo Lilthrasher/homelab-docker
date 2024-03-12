@@ -45,12 +45,10 @@ jobs:
             echo "$service_name Failed To Deploy"
           fi
         done
-        SUCCESSFUL_CONTAINERS=$(echo "$SUCCESSFUL_CONTAINERS" | tr '\n' ',' | sed 's/,$//')
         echo "Successful Containers: $SUCCESSFUL_CONTAINERS"
-        echo "SUCCESSFULY_DEPLOYED=$SUCCESSFUL_CONTAINERS" >> $GITHUB_OUTPUT
-        FAILED_CONTAINERS=$(echo "$FAILED_CONTAINERS" | tr '\n' ',' | sed 's/,$//')
+        echo "SUCCESSFULY_DEPLOYED=$(echo "$SUCCESSFUL_CONTAINERS" | tr '\n' ',' | sed 's/,$//')" >> $GITHUB_OUTPUT
         echo "Failed Containers: $FAILED_CONTAINERS"
-        echo "FAILED_DEPLOYED=$FAILED_CONTAINERS" >> $GITHUB_OUTPUT
+        echo "FAILED_DEPLOYED=$(echo "$FAILED_CONTAINERS" | tr '\n' ',' | sed 's/,$//')" >> $GITHUB_OUTPUT
 
     - name: Send Notification on Fail
       env:
@@ -63,7 +61,7 @@ jobs:
         -H "Title: Redeployment Failed" \
         -H "Tags: warning" \
         -H "Content-Type: text/plain" \
-        -d "$FAILED_CONTAINERS encountered an error while redeploying." \
+        -d "$FAILED_DEPLOYED encountered an error while redeploying." \
         ${{ secrets.NTFY_URL }}
 
         # curl \
