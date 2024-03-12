@@ -63,7 +63,7 @@ jobs:
         -H "Title: Redeployment Failed" \
         -H "Tags: warning" \
         -H "Content-Type: text/plain" \
-        -d "$FAILED_DEPLOYED encountered an error while redeploying." \
+        -d "$FAILED_CONTAINERS encountered an error while redeploying." \
         ${{ secrets.NTFY_URL }}
 
         # curl \
