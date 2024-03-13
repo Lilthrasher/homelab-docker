@@ -1,15 +1,15 @@
-name: Redeploy Containers With Changes
+name: Test Containers In Dev Branch
 
 on:
   push:
     branches:
-      - main
+      - dev
     paths:
       - '**/docker-compose.yaml' # Trigger the workflow on changes to YAML files
   workflow_dispatch:
 
 jobs:
-  Redeploy-Containers:
+  Test-Containers:
     runs-on: self-hosted
 
     steps:
@@ -24,33 +24,34 @@ jobs:
         echo "CHANGED_CONTAINERS=$CHANGED_CONTAINERS_CSV" >> "$GITHUB_OUTPUT"
         echo "$CHANGED_FILES"
 
-    - name: Copy and deploy updated Docker Compose files
-      id: deploy-containers
+    - name: Copy and test updated Docker Compose files
+      id: test-containers
       env:
         CHANGED_CONTAINERS: ${{ steps.changed-containers.outputs.CHANGED_CONTAINERS }}
       run: |
+        mkdir /home/kyle/docker-temp
         IFS=',' read -ra FILES <<< "$CHANGED_CONTAINERS"
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
-          echo "Copying $file to server..."
-          cp -f "$file" /home/kyle/docker-files/"$file"
-          echo "Updating $service_name..."
-          if DEPLOY_OUTPUT=$(docker compose -f /home/kyle/docker-files/"$file" up -d --force-recreate 2>&1); then
+          echo "Copying $file to temp..."
+          cp -f "$file" /home/kyle/docker-temp/"$file"
+          echo "Testing $service_name..."
+          if DEPLOY_OUTPUT=$(docker compose -f /home/kyle/docker-temp/"$file" up -d --force-recreate 2>&1); then
             curl \
             -u ${{ secrets.NTFY_LOGIN }} \
-            -H "Title: Container Redeployed" \
+            -H "Title: Container Passed" \
             -H "Tags: tada" \
             -H "Content-Type: text/plain" \
-            -d "$service_name was redeployed successfully." \
+            -d "$service_name was deployed successfully." \
             ${{ secrets.NTFY_URL }}
             echo "$service_name Deployed Successfully"
           else
             curl \
             -u ${{ secrets.NTFY_LOGIN }} \
-            -H "Title: Redeployment Failed" \
+            -H "Title: Container Failed" \
             -H "Tags: warning" \
             -H "Content-Type: text/plain" \
-            -d "$service_name encountered an error while redeploying.
+            -d "$service_name encountered an error while deploying.
             Error: $(echo "$DEPLOY_OUTPUT" | cut -d':' -f2- | sed 's/^[ \t]*//;s/[ \t]*$//')" \
             ${{ secrets.NTFY_URL }}
             echo "$service_name Failed To Deploy"
@@ -62,7 +63,11 @@ jobs:
 
     - name: Exit Job On Failed Deployment
       env:
-        FAILED_CONTAINERS: ${{ steps.deploy-containers.outputs.FAILED_CONTAINERS }}
-      if: ${{ steps.deploy-containers.outputs.FAILED_CONTAINERS != '' }}
+        FAILED_CONTAINERS: ${{ steps.test-containers.outputs.FAILED_CONTAINERS }}
+      if: ${{ steps.test-containers.outputs.FAILED_CONTAINERS != '' }}
       run: |
         exit 1
+
+    - name: Cleanup Temp Files
+      run: |
+        rm -r /home/kyle/docker-temp
