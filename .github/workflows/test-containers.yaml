@@ -30,7 +30,7 @@ jobs:
         CHANGED_CONTAINERS: ${{ steps.changed-containers.outputs.CHANGED_CONTAINERS }}
       run: |
         mkdir -p /home/kyle/docker-temp
-        echo "ls /home/kyle"
+        echo ls /home/kyle
         IFS=',' read -ra FILES <<< "$CHANGED_CONTAINERS"
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
