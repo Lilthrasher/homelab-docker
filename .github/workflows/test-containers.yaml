@@ -35,6 +35,7 @@ jobs:
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
           echo "Copying $file to temp..."
+          ls -l "$file"
           cp -f "$file" /home/kyle/docker-temp/"$file"
           echo "Testing $service_name..."
           if DEPLOY_OUTPUT=$(docker compose -f /home/kyle/docker-temp/"$file" up -d --force-recreate 2>&1); then
