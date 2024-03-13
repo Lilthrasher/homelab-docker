@@ -61,13 +61,13 @@ jobs:
           echo "FAILED_CONTAINERS=$FAILED_CONTAINERS" >> "$GITHUB_OUTPUT"
         done
 
+    - name: Cleanup Temp Files
+      run: |
+        rm -r /home/kyle/docker-temp
+
     - name: Exit Job On Failed Deployment
       env:
         FAILED_CONTAINERS: ${{ steps.test-containers.outputs.FAILED_CONTAINERS }}
       if: ${{ steps.test-containers.outputs.FAILED_CONTAINERS != '' }}
       run: |
         exit 1
-
-    - name: Cleanup Temp Files
-      run: |
-        rm -r /home/kyle/docker-temp
