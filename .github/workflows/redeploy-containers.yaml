@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Identify changed Docker Compose files
       id: changed-containers
@@ -29,6 +29,8 @@ jobs:
       env:
         CHANGED_CONTAINERS: ${{ steps.changed-containers.outputs.CHANGED_CONTAINERS }}
       run: |
+        SUCCESSFUL_CONTAINERS=0
+        FAILED_CONTAINERS=0
         IFS=',' read -ra FILES <<< "$CHANGED_CONTAINERS"
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
@@ -44,6 +46,7 @@ jobs:
             -d "$service_name was redeployed successfully." \
             ${{ secrets.NTFY_URL }}
             echo "$service_name Deployed Successfully"
+            SUCCESSFUL_CONTAINERS=$(($SUCCESSFUL_CONTAINERS + 1))
           else
             curl \
             -u ${{ secrets.NTFY_LOGIN }} \
@@ -56,6 +59,8 @@ jobs:
             echo "$service_name Failed To Deploy"
             FAILED_CONTAINERS=$(($FAILED_CONTAINERS + 1))
           fi
+          echo "Successful Containers: $SUCCESSFUL_CONTAINERS"
+          echo "SUCCESSFUL_CONTAINERS=$SUCCESSFUL_CONTAINERS" >> "$GITHUB_OUTPUT"
           echo "Failed Containers: $FAILED_CONTAINERS"
           echo "FAILED_CONTAINERS=$FAILED_CONTAINERS" >> "$GITHUB_OUTPUT"
         done
@@ -63,6 +68,6 @@ jobs:
     - name: Exit Job On Failed Deployment
       env:
         FAILED_CONTAINERS: ${{ steps.deploy-containers.outputs.FAILED_CONTAINERS }}
-      if: ${{ steps.deploy-containers.outputs.FAILED_CONTAINERS != '' }}
+      if: ${{ steps.deploy-containers.outputs.FAILED_CONTAINERS != '0' }}
       run: |
         exit 1
