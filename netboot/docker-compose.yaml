@@ -1,0 +1,14 @@
+services:
+  netbootxyz:
+    image: lscr.io/linuxserver/netbootxyz:latest
+    container_name: netbootxyz
+    restart: unless-stopped
+    ports:
+      - ${NETBOOT_PORT}:3000
+      - 69:69/udp
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - ${NETBOOT_DIR}:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
