@@ -65,7 +65,7 @@ jobs:
           echo "FAILED_CONTAINERS=$FAILED_CONTAINERS" >> "$GITHUB_OUTPUT"
         done
 
-    - name: Exit Job On Failed Deployment
+    - name: Exit Job On Any Single Failed Deployment
       env:
         FAILED_CONTAINERS: ${{ steps.deploy-containers.outputs.FAILED_CONTAINERS }}
       if: ${{ steps.deploy-containers.outputs.FAILED_CONTAINERS != '0' }}
