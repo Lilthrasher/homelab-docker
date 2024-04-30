@@ -10,7 +10,10 @@ on:
 
 jobs:
   Redeploy-Containers:
-    runs-on: [ deora, rivited ]
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner: [ deora, rivited ]
 
     steps:
     - name: Checkout code
