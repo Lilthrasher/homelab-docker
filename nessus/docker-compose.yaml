@@ -5,5 +5,5 @@ services:
     restart: unless-stopped
     ports:
       - ${NESSUS_PORT}:8834
-    enviroooooooonment:
+    environment:
       ACTIVATION_CODE: ${NESSUS_CODE}
