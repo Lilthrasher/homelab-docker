@@ -1,12 +1,4 @@
 services:
-  guacd:
-    image: guacamole/guacd
-    container_name: guacamole-daemon
-    restart: unless-stopped
-    volumes:
-      - ${GUAC_DIR}/drive:/drive:rw
-      - ${GUAC_DIR}/record:/record:rw
-
   guacamole:
     image: guacamole/guacamole
     container_name: guacamole-web
@@ -27,6 +19,14 @@ services:
         condition: service_started
       postgres:
         condition: service_started
+
+  guacd:
+    image: guacamole/guacd
+    container_name: guacamole-daemon
+    restart: unless-stopped
+    volumes:
+      - ${GUAC_DIR}/drive:/drive:rw
+      - ${GUAC_DIR}/record:/record:rw
 
   postgres:
     image: postgres
