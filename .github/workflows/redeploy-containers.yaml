@@ -39,7 +39,7 @@ jobs:
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
           echo "Copying $file to server..."
-          cp -f "$file" /home/kyle/docker-files/"$file"
+          cp -f "$file" /home/kyle/docker-files/"$file" || true
           if [ $? -ne 0 ]; then
             exit 0
           fi
