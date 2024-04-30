@@ -10,7 +10,7 @@ on:
 
 jobs:
   Redeploy-Containers:
-    runs-on: self-hosted
+    runs-on: [ deora, rivited ]
 
     steps:
     - name: Checkout code
