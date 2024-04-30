@@ -39,7 +39,10 @@ jobs:
         for file in "${FILES[@]}"; do
           service_name=$(dirname "$file" | xargs basename)
           echo "Copying $file to server..."
-          cp -f "$file" /home/kyle/docker-files/"$file" || true
+          cp -f "$file" /home/kyle/docker-files/"$file"
+          if [ $? -ne 0 ]; then
+            exit 0
+          fi
           echo "Updating $service_name..."
           if DEPLOY_OUTPUT=$(docker compose -f /home/kyle/docker-files/"$file" up -d --force-recreate 2>&1); then
             curl \
