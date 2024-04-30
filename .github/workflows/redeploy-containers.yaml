@@ -12,6 +12,7 @@ jobs:
   Redeploy-Containers:
     runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
       matrix:
         runner: [ deora, rivited ]
 
