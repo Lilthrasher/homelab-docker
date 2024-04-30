@@ -1,0 +1,14 @@
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/jellyfin:/config
+      - ${MOVIE_DIR}:/data/movies
+      - ${TV_DIR}:/data/tvshows
+    restart: unless-stopped
