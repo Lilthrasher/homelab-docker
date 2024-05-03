@@ -104,3 +104,27 @@ services:
     depends_on:
       gluetun:
         condition: service_healthy
+
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:latest
+    container_name: tdarr
+    network_mode: host
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK_SET=002
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+      - internalNode=true
+      - inContainer=true
+      - ffmpegVersion=6
+      - nodeName=MyInternalNode
+    volumes:
+      - ${CONFIG_DIR}/tdarr/server:/app/server
+      - ${CONFIG_DIR}/tdarr/configs:/app/configs
+      - ${CONFIG_DIR}/tdarr/logs:/app/logs
+      - ${MEDIA_DIR}:/media
+      - /transcode_cache:/temp
+    restart: unless-stopped
