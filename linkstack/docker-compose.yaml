@@ -1,0 +1,21 @@
+services:
+  linkstack:
+    image: linkstackorg/linkstack
+    container_name: linkstack
+    restart: unless-stopped
+    ports:
+      - ${PORT}:80
+      - ${HTTPS_PORT}:443
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - linkstack:/htdocs
+    environment:
+      - SERVER_ADMIN=${EMAIL}
+      - HTTP_SERVER_NAME=links.smithhomelab.com
+      - HTTPS_SERVER_NAME=links.smithhomelab.com
+      - LOG_LEVEL=info
+      - PHP_MEMORY_LIMIT=512M
+      - UPLOAD_MAX_FILESIZE=16M
+
+volumes:
+  linkstack:
