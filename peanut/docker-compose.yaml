@@ -1,0 +1,11 @@
+services:
+  peanut:
+    image: brandawg93/peanut:latest
+    container_name: PeaNUT
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    environment:
+      - NUT_HOST=10.27.1.100
+      - NUT_PORT=3493
+      - WEB_PORT=8080
