@@ -1,0 +1,18 @@
+services:
+  fileflows:
+    image: revenz/fileflows
+    container_name: fileflows
+    restart: unless-stopped
+    ports:
+      - "19200:5000"
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    environment:
+      - TZ=America/Indiana/Indianapolis
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /mnt/plex-fast/data/transcode:/temp
+      - /mnt/plex-fast/data/media:/media
+      - ./fileflows-data:/app/Data
+      - ./fileflows-data:/app/Logs
