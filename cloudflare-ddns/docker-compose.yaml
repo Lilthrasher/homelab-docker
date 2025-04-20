@@ -1,9 +1,14 @@
 services:
   cloudflare-ddns:
-    image: oznu/cloudflare-ddns:latest
+    image: favonia/cloudflare-ddns:latest
     container_name: cloudflare-ddns
+    network_mode: host
     restart: unless-stopped
+    user: "1000:1000"
+    read_only: true
+    cap_drop: [all]
+    security_opt: [no-new-privileges:true]
     environment:
-      - API_KEY=${API_KEY}
-      - ZONE=${ZONE}
-      - PROXIED=false
+      - CLOUDFLARE_API_TOKEN=${API_KEY}
+      - DOMAINS=${ZONE}
+      - PROXIED=true
