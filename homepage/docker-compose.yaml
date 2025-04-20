@@ -8,4 +8,7 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone
       - ${DATA_DIR}:/app/config
+      - ${IMAGE_DIR}:/app/public/images
       - ${SECRET_DIR}
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=${HOSTS}
