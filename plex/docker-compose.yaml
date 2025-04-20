@@ -2,7 +2,10 @@ services:
   plex: #default port is 32400
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
+    restart: unless-stopped
     network_mode: host
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -11,16 +14,29 @@ services:
     volumes:
       - ${CONFIG_DIR}/plex:/config
       - ${MEDIA_DIR}:/data/media
-    restart: unless-stopped
 
   tautulli: #default port is 8181
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
-    network_mode: host
+    restart: unless-stopped
+    ports:
+      - 8181:8181
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
       - ${CONFIG_DIR}/tautulli:/config
+
+  overseerr: #default port is 5055
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
     restart: unless-stopped
+    ports:
+      - 5055:5055
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONFIG_DIR}/overseerr:/config
