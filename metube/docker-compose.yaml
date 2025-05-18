@@ -6,6 +6,9 @@ services:
     ports:
       - ${METUBE_PORT}:8081
     volumes:
-      - ${METUBE_DIR}:/downloads
+      - metube:/downloads
     environment:
       - YTDL_OPTIONS={"ignoreerrors":true}
+
+volumes:
+  metube:
